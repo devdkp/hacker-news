@@ -1,0 +1,39 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Comments</th>
+                            <th>Vote Counts</th>
+                            <th>UpVotes</th>
+                            <th>News Details</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let news of newsData">
+                            <!-- <div *ngFor="let id of hiddenObject"> -->
+
+                            <td>{{news.num_comments}}</td>
+                            <td><span *ngIf="voteCount > 0">{{voteCount}}</span><span *ngIf="voteCount ==0">{{news.points}}</span></td>
+                            <!-- <td>{{news.points}}</td> -->
+                            <td><img src="../../assets/icons/upvote.png" width="20" height="20" class="icon" (click)="upVote($event)" /></td>
+                            <td>{{news.title}}<span><a href="javascript:void(0)" (click)="hideNews(news.objectID)"> | hide</a></span></td>
+                            <!-- </div> -->
+
+                        </tr>
+
+                    </tbody>
+                </table>
+                <p-paginator [rows]="5" totalRecords="20" (onPageChange)="paginate($event)"></p-paginator>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <p-chart type="line" [data]="data"></p-chart>
+            <!-- <p-chart type="pie" [data]="data"></p-chart> -->
+            <!-- <p-chart type="line" [data]="data" width="40vw" height="80vh"></p-chart> -->
+        </div>
+    </div>
+</div>
