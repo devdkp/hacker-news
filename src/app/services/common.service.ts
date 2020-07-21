@@ -18,4 +18,9 @@ export class CommonService {
   {
     return this.http.get(url);
   }
+
+  getPageData(url:string)
+  {
+    return this.http.get(url);
+  }
 }

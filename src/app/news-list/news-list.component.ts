@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonService } from '../services/common.service';
 import {environment} from '../../environments/environment'
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-news-list',
@@ -13,9 +14,10 @@ export class NewsListComponent implements OnInit {
    newsData = [];
    voteCount = 0;
    data: any;
-   hiddenObject = [];
+   objectId : number;
+   currentPage:number = 0;
 
-  constructor(private commonService: CommonService) { }
+  constructor(private commonService: CommonService, private router:Router) { }
 
   ngOnInit() {
 
@@ -49,15 +51,16 @@ export class NewsListComponent implements OnInit {
     })
   }
 
- async upVote(event)
+ upVote(objectId)
   {
-    let points = event;
-    console.log(points);
-    return
-    points++;
-    await this.commonService.dataSource.next(points);
-    
-    this.subscribeVote();
+    const data = this.newsData.find(x => x.objectID === objectId);
+    if (!data) {
+      alert('Something bad happened');
+      return;
+    }
+
+    data.points++;
+    return;
   }
 
   subscribeVote()
@@ -80,11 +83,47 @@ export class NewsListComponent implements OnInit {
 
 hideNews(id)
 {
-  // console.log(id);
-  this.hiddenObject.push(id);
+  const data = this.newsData.find(x => x.objectID === id);
+  if (!data) {
+    alert('Something bad happened');
+    return;
+  }
+    this.objectId = data.objectID;
 
-  console.log(this.hiddenObject);
   
+  return;
+}
+
+previousPage()
+{
+  this.currentPage--;
+  this.commonService.getData(this.apiUrl+`/v1/search?tags=front_page&page=${this.currentPage}`).subscribe((res) =>{
+    console.log(res);
+     if(res['hits'].length > 0)
+     {
+       this.newsData = res['hits'];
+       //this.router.navigate(['/v1/search']);
+       this.router.navigate(['/v1/search'], { queryParams: { tags: 'front_page', page:this.currentPage } });
+       console.log('News data is ', this.newsData);
+       
+     }
+    })
+}
+
+nextPage()
+{
+  this.currentPage++;
+  this.commonService.getData(this.apiUrl+`/v1/search?tags=front_page&page=${this.currentPage}`).subscribe((res) =>{
+    console.log(res);
+     if(res['hits'].length > 0)
+     {
+       this.newsData = res['hits'];
+       this.router.navigate(['/v1/search'], { queryParams: { tags: 'front_page', page:this.currentPage } });
+
+       console.log('News data is ', this.newsData);
+       
+     }
+    })
 
 }
 

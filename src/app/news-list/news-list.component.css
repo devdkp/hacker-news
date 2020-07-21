@@ -6,3 +6,13 @@ th {
 .icon {
     cursor: pointer;
 }
+
+button {
+    margin: 10px 0px;
+    background-color: #f06432;
+    border: 1px solid #888;
+}
+
+.bb {
+    border-bottom: 2px solid #f06432;
+}
