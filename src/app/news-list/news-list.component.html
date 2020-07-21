@@ -12,7 +12,7 @@
 
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody *ngIf="!noDataFound">
                         <tr *ngFor="let news of newsData" [hidden]="news.objectID == objectId">
                             <!-- <div *ngIf="news.objectID != objectId"> -->
 
@@ -25,15 +25,22 @@
                         </tr>
 
                     </tbody>
+                    <tbody *ngIf="noDataFound">
+                        <tr>
+                            <td colspan="3">
+                                No data Found
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
                 <!-- <p-paginator [rows]="5" totalRecords="20" (onPageChange)="paginate($event)"></p-paginator> -->
                 <div class="d-flex paging justify-content-end">
-                    <button (click)="previousPage()" [disabled]="currentPage == 0">Prev</button>
-                    <button (click)="nextPage()">Next >></button>
+                    <button (click)="previousPage()" [disabled]="currentPage == 0">	&#60;&#60;Prev</button>
+                    <button (click)="nextPage()" [disabled]="noDataFound">Next >></button>
                 </div>
             </div>
         </div>
-        <div class="col-md-12">
+        <div class="col-md-12" *ngIf="!noDataFound">
             <p-chart type="line" [data]="data"></p-chart>
             <!-- <p-chart type="pie" [data]="data"></p-chart> -->
             <!-- <p-chart type="line" [data]="data" width="40vw" height="80vh"></p-chart> -->

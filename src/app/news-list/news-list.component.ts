@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonService } from '../services/common.service';
 import {environment} from '../../environments/environment'
+import { Location } from "@angular/common";
 import { Router } from '@angular/router';
 
 @Component({
@@ -16,8 +17,20 @@ export class NewsListComponent implements OnInit {
    data: any;
    objectId : number;
    currentPage:number = 0;
+   noDataFound: boolean = false;
+   route: string;
 
-  constructor(private commonService: CommonService, private router:Router) { }
+   constructor(private commonService: CommonService, private router:Router, private location:Location) { 
+
+    router.events.subscribe(val => {
+      
+      let pageCount = location.path().split('=');
+      this.currentPage = parseInt(pageCount[1]);
+      console.log(this.currentPage, pageCount, 'location path');
+      
+    });
+   
+  }
 
   ngOnInit() {
 
@@ -39,7 +52,7 @@ export class NewsListComponent implements OnInit {
 
   getAllNews()
   {
-    this.commonService.getData(this.apiUrl+'/v1/search?tags=front_page').subscribe((res) =>{
+    this.commonService.getData(this.apiUrl+`/v1/search?tags=front_page&page=${this.currentPage}`).subscribe((res) =>{
     console.log(res);
      if(res['hits'].length > 0)
      {
@@ -48,6 +61,12 @@ export class NewsListComponent implements OnInit {
        console.log('News data is ', this.newsData);
        
      }
+     else{
+      this.router.navigate(['/'], { queryParams: {  page:this.currentPage } });
+      console.log('No data found');
+      this.noDataFound = true;
+      
+    }
     })
   }
 
@@ -62,24 +81,6 @@ export class NewsListComponent implements OnInit {
     data.points++;
     return;
   }
-
-  subscribeVote()
-  {
-    this.commonService.currentVoteCount.subscribe((vote) =>{
-      this.voteCount = vote;
-    })
-  }
-
-  paginate(event) {
-    //event.first = Index of the first record
-    //event.rows = Number of rows to display in new page
-    //event.page = Index of the new page
-    //event.pageCount = Total number of pages
-}
-
-// update(event: Event) {
-//   this.data = 
-// }
 
 hideNews(id)
 {
@@ -96,6 +97,7 @@ hideNews(id)
 
 previousPage()
 {
+  this.noDataFound = false;
   this.currentPage--;
   this.commonService.getData(this.apiUrl+`/v1/search?tags=front_page&page=${this.currentPage}`).subscribe((res) =>{
     console.log(res);
@@ -103,24 +105,37 @@ previousPage()
      {
        this.newsData = res['hits'];
        //this.router.navigate(['/v1/search']);
-       this.router.navigate(['/v1/search'], { queryParams: { tags: 'front_page', page:this.currentPage } });
+       this.router.navigate(['/'], { queryParams: {  page:this.currentPage } });
        console.log('News data is ', this.newsData);
        
      }
+     else{
+      this.router.navigate(['/'], { queryParams: {  page:this.currentPage } });
+      console.log('No data found');
+      this.noDataFound = true;
+      
+    }
     })
 }
 
 nextPage()
 {
+  this.noDataFound = false;
   this.currentPage++;
   this.commonService.getData(this.apiUrl+`/v1/search?tags=front_page&page=${this.currentPage}`).subscribe((res) =>{
     console.log(res);
      if(res['hits'].length > 0)
      {
        this.newsData = res['hits'];
-       this.router.navigate(['/v1/search'], { queryParams: { tags: 'front_page', page:this.currentPage } });
+       this.router.navigate(['/'], { queryParams: { page:this.currentPage } });
 
        console.log('News data is ', this.newsData);
+       
+     }
+     else{
+      this.router.navigate(['/'], { queryParams: {  page:this.currentPage } });
+       console.log('No data found');
+       this.noDataFound = true;
        
      }
     })
