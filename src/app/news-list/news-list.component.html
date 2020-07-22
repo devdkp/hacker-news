@@ -14,13 +14,16 @@
                     </thead>
                     <tbody *ngIf="!noDataFound">
                         <tr *ngFor="let news of newsData" [hidden]="news.objectID == objectId">
-                            <!-- <div *ngIf="news.objectID != objectId"> -->
 
                             <td>{{news.num_comments}}</td>
                             <td>{{news.points}}</td>
-                            <td><img src="../../assets/icons/upvote.png" width="20" height="20" class="icon" (click)="upVote(news.objectID)" /></td>
-                            <td>{{news.title}}<span><a href="javascript:void(0)" (click)="hideNews(news.objectID)"> | hide</a></span></td>
-                            <!-- </div> -->
+                            <td>
+                                <!-- <img src="../../assets/icons/upvote.png" width="15" height="15" class="icon" /> -->
+                                <i class="fa fa-sort-asc icon" (click)="upVote(news.objectID)"></i>
+                            </td>
+                            <td>{{news.title}} <span><a class="url" href={{news.url}} target="_blank">({{news.url | getDomain}})</a></span><span><a href="javascript:void(0)" (click)="hideNews(news.objectID)"> | hide</a></span>
+                                <p class="sub-title"><span class="author">By: {{news.author}}</span> {{news.created_at | dateAgo}}</p>
+                            </td>
 
                         </tr>
 
@@ -41,9 +44,10 @@
             </div>
         </div>
         <div class="col-md-12" *ngIf="!noDataFound">
-            <p-chart type="line" [data]="data"></p-chart>
-            <!-- <p-chart type="pie" [data]="data"></p-chart> -->
-            <!-- <p-chart type="line" [data]="data" width="40vw" height="80vh"></p-chart> -->
+            <!-- <p-chart type="line" [data]="data"></p-chart> -->
+            <app-line-chart></app-line-chart>
         </div>
+        <!-- <div id="chartContainer" style="height: 300px; width: 100%;"></div> -->
+
     </div>
 </div>

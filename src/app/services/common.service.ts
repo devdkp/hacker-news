@@ -7,8 +7,8 @@ import { HttpClient } from '@angular/common/http';
 })
 export class CommonService {
 
-  dataSource = new BehaviorSubject(null);
-  currentVoteCount = this.dataSource.asObservable();
+  dataSource = new BehaviorSubject([]);
+  chartData = this.dataSource.asObservable();
 
   constructor(
     private http: HttpClient

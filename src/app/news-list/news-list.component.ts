@@ -20,6 +20,10 @@ export class NewsListComponent implements OnInit {
   noDataFound: boolean = false;
   route: string;
   hideId = [];
+  allData: Array<string>;
+  chartData = []
+  
+
 
   constructor(private commonService: CommonService, private router: Router, private _rout: ActivatedRoute, private location: Location) {
 
@@ -47,13 +51,14 @@ export class NewsListComponent implements OnInit {
     }
   }
 
-  getAllNews() {
-    this.commonService.getData(this.apiUrl + `/v1/search?tags=front_page&page=${this.currentPage}`).subscribe((res) => {
+    getAllNews() {
+     this.commonService.getData(this.apiUrl + `/v1/search?tags=front_page&page=${this.currentPage}`).subscribe((res) => {
       console.log(res);
       if (res['hits'].length > 0) {
         this.setNewsData(res['hits']);
-        console.log('News data is ', this.newsData);
-
+       // console.log('News data is ', this.newsData);
+        
+        this.setChartData(res['hits']);
       }
       else {
         this.router.navigate(['/'], { queryParams: { page: this.currentPage } });
@@ -62,6 +67,22 @@ export class NewsListComponent implements OnInit {
 
       }
     })
+  }
+
+   setChartData(data)
+  {
+     for(let i=0; i<data.length; i++)
+     {
+    // console.log('Chart data is', data[i]['points'], data[i]['objectID']);
+     this.chartData.push({y:data[i]['points'], x:parseInt(data[i]['objectID'])});
+
+    // console.log(this.chartData, 'Chart array');
+      
+    }
+     if(this.chartData.length > 0)
+     this.commonService.dataSource.next(this.chartData);
+//this.chartData.push(1);
+ 
   }
 
   upVote(objectId) {
@@ -117,15 +138,23 @@ export class NewsListComponent implements OnInit {
     this.currentPage++;
     this.commonService.getData(this.apiUrl + `/v1/search?tags=front_page&page=${this.currentPage}`).subscribe((res) => {
       console.log(res);
-      if (res['hits'].length < 20) {
+      if (res['hits'].length > 0) {
+        //this.noDataFound = true;
+        this.setNewsData(res['hits']);
+        this.router.navigate(['/'], { queryParams: { page: this.currentPage } });
+        console.log('News data is ', this.newsData);
+      }
+      else{
+        this.router.navigate(['/'], { queryParams: { page: this.currentPage } });
+        console.log('No data found');
         this.noDataFound = true;
       }
 
      // this.newsData = res['hits'];
-      this.setNewsData(res['hits']);
-      this.currentPage ? this.router.navigate(['/'], { queryParams: { page: this.currentPage } }) : this.router.navigate(['/']);
+      //this.setNewsData(res['hits']);
+     // this.currentPage ? this.router.navigate(['/'], { queryParams: { page: this.currentPage } }) : this.router.navigate(['/']);
 
-      console.log('News data is ', this.newsData);
+      //console.log('News data is ', this.newsData);
 
     })
 

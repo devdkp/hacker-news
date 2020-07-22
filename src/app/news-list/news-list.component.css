@@ -1,3 +1,5 @@
+/* @import "https://canvasjs.com/assets/script/canvasjs.min.js"; */
+
 th {
     background-color: #f06432;
     color: #fff;
@@ -5,6 +7,8 @@ th {
 
 .icon {
     cursor: pointer;
+    color: #444;
+    font-size: 20px;
 }
 
 button {
@@ -16,3 +20,16 @@ button {
 .bb {
     border-bottom: 2px solid #f06432;
 }
+
+.sub-title,
+.url {
+    font-size: 11px;
+    color: #666;
+    margin: 0px;
+}
+
+
+/* .url {
+    font-size: 10px;
+    color: #666;
+} */
