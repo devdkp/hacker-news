@@ -1,11 +1,13 @@
-### STAGE 1: Build ###
-FROM node:latest AS build
+# Stage 1
+FROM node:10-alpine as build-step
+RUN mkdir -p /app
 WORKDIR /app
-COPY package.json package-lock.json ./
+COPY package.json /app
 RUN npm install
-COPY . .
+COPY . /app
 RUN npm run build --prod
-### STAGE 2: Run ###
-FROM nginx:alpine
-COPY nginx.conf /etc/nginx/nginx.conf
-COPY --from=node /app/dist/frontend /usr/share/nginx/html
+
+# Stage 2
+
+# FROM nginx:1.17.1-alpine
+# COPY --from=build-step /dist/frontend /usr/share/nginx/html
