@@ -5,6 +5,7 @@
                 <table class="table">
                     <thead>
                         <tr>
+                            <th>Sr no.</th>
                             <th>Comments</th>
                             <th>Vote Counts</th>
                             <th>UpVotes</th>
@@ -13,8 +14,8 @@
                         </tr>
                     </thead>
                     <tbody *ngIf="!noDataFound">
-                        <tr *ngFor="let news of newsData" [hidden]="news.objectID == objectId">
-
+                        <tr *ngFor="let news of newsData; let i=index;">
+                            <td>{{i+1}}</td>
                             <td>{{news.num_comments}}</td>
                             <td>{{news.points}}</td>
                             <td>
@@ -44,10 +45,7 @@
             </div>
         </div>
         <div class="col-md-12" *ngIf="!noDataFound">
-            <!-- <p-chart type="line" [data]="data"></p-chart> -->
             <app-line-chart></app-line-chart>
         </div>
-        <!-- <div id="chartContainer" style="height: 300px; width: 100%;"></div> -->
-
     </div>
 </div>

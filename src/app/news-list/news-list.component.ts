@@ -35,30 +35,31 @@ export class NewsListComponent implements OnInit {
 
   ngOnInit() {
 
-    this.getAllNews();
-    this.data = {
-      labels: ['0', '250', '500', '750', '1000'],
-      datasets: [
-        // {
-        //     label: 'First Dataset',
-        //     data: [65, 59, 80, 81, 56, 55, 40]
-        // },
-        {
-          label: 'Vote',
-          data: [28, 48, 40, 19, 86, 27, 90]
-        }
-      ]
+    let hiddenData = JSON.parse(localStorage.getItem('hiddenNews'));
+    
+    if( hiddenData && hiddenData.length > 0)
+    {
+      this.newsData = hiddenData;
+      this.setNewsData(this.newsData);
+      this.setChartData(this.newsData);
+    }
+    else{
+      this.getAllNews();
+     // this.setChartData(newsData);
     }
   }
 
     getAllNews() {
+      
      this.commonService.getData(this.apiUrl + `/v1/search?tags=front_page&page=${this.currentPage}`).subscribe((res) => {
       console.log(res);
       if (res['hits'].length > 0) {
         this.setNewsData(res['hits']);
-       // console.log('News data is ', this.newsData);
-        
-        this.setChartData(res['hits']);
+       localStorage.setItem('newsData', JSON.stringify(res['hits']));
+
+     if(JSON.parse(localStorage.getItem('newsData')).length > 0)
+      this.setStorage()
+       
       }
       else {
         this.router.navigate(['/'], { queryParams: { page: this.currentPage } });
@@ -69,19 +70,32 @@ export class NewsListComponent implements OnInit {
     })
   }
 
+ setStorage()
+  {
+    
+    let newsData = JSON.parse(localStorage.getItem('newsData'));
+    // alert(newsData)
+     this.setChartData(newsData);
+  }
+
    setChartData(data)
   {
-     for(let i=0; i<data.length; i++)
-     {
-    // console.log('Chart data is', data[i]['points'], data[i]['objectID']);
-     this.chartData.push({y:data[i]['points'], x:parseInt(data[i]['objectID'])});
 
-    // console.log(this.chartData, 'Chart array');
+    this.chartData = [];
+    for(let i=0; i<data.length; i++)
+     {
       
-    }
+     this.chartData.push({y:data[i]['points'], x:parseInt(data[i]['objectID'])});
+      }
      if(this.chartData.length > 0)
-     this.commonService.dataSource.next(this.chartData);
-//this.chartData.push(1);
+     {
+      this.commonService.dataSource.next(this.chartData);
+      // alert();
+     // alert(this.chartData)
+      console.log(this.chartData, 'after upvote');
+      
+     }
+     
  
   }
 
@@ -94,22 +108,26 @@ export class NewsListComponent implements OnInit {
 
     data.points++;
     localStorage.setItem(objectId, data.points);
+    this.setChartData(data);
+  // this.commonService.dataSource.next(this.chartData);
+
+  // this.setNewsData(data);
   }
 
   hideNews(id) {
-        this.newsData = this.newsData.filter(x => x.objectID !== id);
-      // this.hideId(id);
-      const arr = this.newsData.find(x => x.objectID === id);
-      console.log(arr);
-      
-       localStorage.setItem(id, arr.objectID);
-
-       
-  }
+      this.newsData = this.newsData.filter(x => x.objectID !== id);
+      localStorage.setItem('hiddenNews', JSON.stringify(this.newsData));
+      localStorage.setItem('newsData', JSON.stringify(this.newsData));
+      this.getAfterHide()
+ }
   
-  getAfterHide(objectId)
+  getAfterHide()
   {
-    this.newsData = this.newsData.filter(x => x.objectID !== objectId);
+   // let remain = localStorage.getItem('hiddenNews');
+   let remain = localStorage.getItem('newsData');
+    this.newsData = JSON.parse(remain);
+    this.setChartData(this.newsData);
+    
   }
 
   previousPage() {
@@ -170,6 +188,7 @@ export class NewsListComponent implements OnInit {
       }
     }
     this.newsData= newsData;
+
   }
 
 

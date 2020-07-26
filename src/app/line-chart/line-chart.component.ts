@@ -13,18 +13,30 @@ export class LineChartComponent implements OnInit {
   chartArr = [];
 
   constructor(private commonService:CommonService) { 
+	
 
     this.commonService.chartData.subscribe((res) =>{
-      console.log(res, 'response from chat');
-      this.chartArr.push(res);
+	  console.log(res, 'response from chart');
+	  
+	  if(res.length > 0)
+	  {	
+		this.chartArr = [];
+		//this.feelChartData();
+		for(let i=0; i<res.length; i++)
+		{
+		this.chartArr.push({y:res[i]['y'], x: res[i]['x']});
+		}
+
+		
+	  }
+	  
       
-    })
+	})
   }
 
 
   ngOnInit() {
-   
-    this.feelChartData();
+       this.feelChartData();
     }
 
    
@@ -44,30 +56,36 @@ var chart = new CanvasJS.Chart("chartContainer", {
 		includeZero: false
   },
   axisX:{
-    includeZero: true
+    includeZero: false
   },
 	data: [{        
 		type: "line",
       	indexLabelFontSize: 16,
-		dataPoints: [
-			{ y: 450, x:23915521 },
-			{ y: 414, x:23915522},
-			{ y: 520, x:23915523 },
-			{ y: 460, x:23915524 },
-			{ y: 450, x:23915525 },
-			{ y: 500, x:23915526 },
-			{ y: 480, x:23915527 },
-			{ y: 480, x:23915528 },
-			{ y: 410 , x:23915529 },
-			{ y: 500, x:23915530 },
-			{ y: 480, x:23915531 },
-			{ y: 510, x:23915532 }
-    ]
+	// 	dataPoints: [
+	// 		{ y: 450, x:23915521 },
+	// 		{ y: 414, x:23915522},
+	// 		{ y: 520, x:23915523 },
+	// 		{ y: 460, x:23915524 },
+	// 		{ y: 450, x:23915525 },
+	// 		{ y: 500, x:23915526 },
+	// 		{ y: 480, x:23915527 },
+	// 		{ y: 480, x:23915528 },
+	// 		{ y: 410 , x:23915529 },
+	// 		{ y: 500, x:23915530 },
+	// 		{ y: 480, x:23915531 },
+	// 		{ y: 510, x:23915532 }
+    // ]
     
-    //dataPoints: this.chartArr
+    dataPoints: this.chartArr
 	}]
 });
-chart.render();
+if(this.chartArr.length > 0)
+{
+	chart.render();
+	console.log('rendered chart ', this.chartArr);
+	
+}
+
 
 }
 
